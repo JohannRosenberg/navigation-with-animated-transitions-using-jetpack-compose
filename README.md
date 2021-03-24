@@ -2,33 +2,20 @@
 
 <img src="https://github.com/JohannBlake/adoptme/blob/main/images/navigation.gif" width="300" height="600">
 
-
-
 This app demonstrates how to use animated transitions when navigating between screens when using Jetpack Compose. It also shows how to pass any type of data to another screen.
-
-
 
 I have also written an article on Medium that covers the code in this app in much more detail. It touches on developing with Compose beyond what you read in the official Android docs. You can find the article at:<br>
 
-[https://medium.com/@johannblake/navigating-with-animated-transitions-using-jetpack-compose-daeb00d4fb45](https://medium.com/@johannblake/navigating-with-animated-transitions-using-jetpack-compose-daeb00d4fb45) 
-
-
+https://medium.com/@johannblake/navigation-with-animated-transitions-using-jetpack-compose-daeb00d4fb45
+<br>
 
 This app does not use the Compose navigation framework due to its limitation of the data types that you can use when passing data to another screen. These are limited to the same subset you would normally use under the older View system when passing data to activities and fragments, i.e., the types restricted to bundles. Because Compose doesn't use activities or fragmenets (other than the startup activity), I personally never felt there was a need to restrict the app to these data types. You should be able to pass any data type.
 
-
-
 Another limitation is that animated transitions are currently not supported when navigating to and from screens, although Google has mentioned in their docs that this feature is in the pipeline.
-
-
 
 As a result, I created my own navigation framework. It is designed in such a way that you can apply animated transitions however you want and these animations are not controlled by the navigation framework. In fact, the navigation framework is so simple that it's only prupose is to manage a screen stack and provides some additional functions that make navigation easier. Referred to as the **Navigation Manager**, the navigation manager is the source of truth of your app's navigation history. Unlike the Compose navigation framework, there is no Navigation Host or any concept of a graph. You simply initialize the Navigation Manager with the types of screens your app will be using, optionally provide the type of class you want to use as the viewmodel for the screen and indicate which of the screens will act as your home screen. After that, it's just a matter of calling the Navigation Manager APIs to navigate to a screen, go back to a previous screen, or return to the home screen.
 
-
-
 The code for the Navigation Manager is separate from the app's demo code and provided as an Android Library module under the **navigation** folder.
-
-
 
 The data for the app is retrieved from an API I created on Wirespec:
 [https://wirespec.dev/Wirespec/projects/apis/AdoptPets](https://wirespec.dev/Wirespec/projects/apis/AdoptPets)
@@ -41,15 +28,9 @@ It basically provides a list of 60 cats available for adoption. Wirespec is free
 
 A navigation drawer is provided and contains a large list of menu items. Only the Home and Settings menu items have their own dedicated screens when you click on them. All the other menu items use the same screen, which I call a **dummy screen**. The purpose of the dummy screen is to show how you can re-use the same screen for different purposes.
 
-
-
 It should be noted that you can only open up the navigation drawer while on the home screen. Whether you would want to limit it this way or allow it to be available under other conditions is something you can easily implement as explained in the Medium article.
 
-
-
 Clicking on a grid item, takes you to the details screen for the item you have selected. Images of the cats are loaded dynamically. If you scroll to the bottom, there is a button that you can click on to adopt the pet. It takes you to a dummy screen.
-
-
 
 The dummy screen has a button that lets you create another instance of a dummy screen. You can click on this and keep repeating it. At some point, you can then use the Back button and navigate back to the home screen to see how the state of each screen is maintained. There is also a button on the dummy screen that will take you directly to the home screen. If you click that, you end up clearing the navigation stack. At that point, if you click the Back button again, you'll exit the app.
 
