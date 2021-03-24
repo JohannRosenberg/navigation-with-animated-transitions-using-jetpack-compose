@@ -6,7 +6,9 @@ This app demonstrates how to use animated transitions when navigating between sc
 
 I have also written an article on Medium that covers the code in this app in much more detail. It touches on developing with Compose beyond what you read in the official Android docs. You can find the article at:<br>
 
-https://medium.com/@johannblake/navigation-with-animated-transitions-using-jetpack-compose-daeb00d4fb45
+
+[https://proandroiddev.com/navigation-with-animated-transitions-using-jetpack-compose-daeb00d4fb45](https://proandroiddev.com/navigation-with-animated-transitions-using-jetpack-compose-daeb00d4fb45)
+
 <br>
 
 This app does not use the Compose navigation framework due to its limitation of the data types that you can use when passing data to another screen. These are limited to the same subset you would normally use under the older View system when passing data to activities and fragments, i.e., the types restricted to bundles. Because Compose doesn't use activities or fragmenets (other than the startup activity), I personally never felt there was a need to restrict the app to these data types. You should be able to pass any data type.
