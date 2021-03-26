@@ -99,6 +99,15 @@ class NavigationManager {
          */
         val onScreenChange: LiveData<Int> = _onScreenChange
 
+
+        /**
+         * Returns navigation information about the current screen.
+         */
+        val currentScreenNavInfo: NavigationInfo
+            get() {
+                return navStack[navStack.lastIndex - 1]
+            }
+
         /**
          * An observer that clients can register with to get notified whenever the screen changes.
          * Note: This is intended to be used by parts of an app that do not generate any UI.
@@ -162,7 +171,7 @@ class NavigationManager {
         fun navigateToHomeScreen() {
             if (navStack.size > 2) {
                 navStack = navStack.filterIndexed { index, _ ->
-                     (index == 0) || (index == navStack.lastIndex)
+                    (index == 0) || (index == navStack.lastIndex)
                 }.toMutableList()
             }
 
@@ -201,5 +210,3 @@ class NavigationManager {
         }
     }
 }
-
-
