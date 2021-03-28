@@ -108,6 +108,21 @@ class NavigationManager {
                 return navStack[navStack.lastIndex - 1]
             }
 
+
+        /**
+         * Returns navigation information about the previous screen. Returns null
+         * if there is no previous screen, which would be the case if the current
+         * screen is the home screen.
+         */
+        val previousScreenNavInfo: NavigationInfo?
+            get() {
+                if (navStack.size < 3) {
+                    return null
+                }
+
+                return navStack[navStack.lastIndex - 2]
+            }
+
         /**
          * An observer that clients can register with to get notified whenever the screen changes.
          * Note: This is intended to be used by parts of an app that do not generate any UI.
