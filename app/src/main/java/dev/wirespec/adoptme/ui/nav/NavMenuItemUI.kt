@@ -49,7 +49,7 @@ fun NavMenuItem(
     CompositionLocalProvider(LocalRippleTheme provides rippleTheme) {
         Row(
             modifier = modifier
-                .width(200.dp)
+                .width(190.dp)
                 .indication(indication = rememberRipple(color = rippleColor), interactionSource  = MutableInteractionSource())
                 .clickable {
                     onNavItemClick(menuId, screen, dstArgs)
