@@ -37,8 +37,7 @@ fun PetGridRow(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .height(colWidth.dp)
-            .padding(0.dp),
+            .height(colWidth.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         for (c in petListItem.position until lastItemPos + 1) {

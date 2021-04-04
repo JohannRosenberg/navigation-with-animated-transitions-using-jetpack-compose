@@ -194,12 +194,37 @@ class NavigationManager {
         }
 
         /**
-         * Navigates back to the previous screen. The current screen
-         * is removed from the navigation stack. If the current screen
-         * is the home screen, then hitting the Back button should cause
-         * the app to exit.
+         * Navigates back to the previous screen. If the current screen's view model is controlled by
+         * the navigation manager, a check will first be made to see if the view model implements the
+         * navigateBackImmediately function. If it does, a call is first made to navigateBackImmediately. If
+         * navigateBackImmediately returns true, the navigation manager will navigate to the previous screen (if one exists)
+         * If navigateBackImmediately returns false, no navigation is made to the previous screen. If the current
+         * screen needs to perform clean up work or prompt the user about something prior to navigating to the previous screen, the
+         * current screen can then call the goBackImmediately function when it is ready to return to the previous screen.
+         *
+         * Once navigation to the previous screen is allowed, the current screen is removed from the navigation stack.
+         * If the current screen is the home screen, then hitting the Back button should cause the app to exit.
          */
         fun goBack(): Boolean {
+
+            if ((currentScreenNavInfo.viewmodel != null) && (currentScreenNavInfo.viewmodel is NavigationManagerHelper)) {
+                val navHelper = currentScreenNavInfo.viewmodel as NavigationManagerHelper
+
+                if (!navHelper.navigateBackImmediately()) {
+                    return true
+                }
+            }
+
+            return goBackImmediately()
+        }
+
+
+        /**
+         * Navigates back to the previous screen immediately. No check is made to see if the current screen
+         * requires a confirmation to go back. The current screen is removed from the navigation stack. If the current screen
+         * is the home screen, then hitting the Back button should cause the app to exit.
+         */
+        fun goBackImmediately(): Boolean {
             if (navStack.size == 2) {
                 resetStackToHomeScreen()
                 return false
