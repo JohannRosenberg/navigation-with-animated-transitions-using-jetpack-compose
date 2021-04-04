@@ -10,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dev.wirespec.adoptme.App
 import dev.wirespec.adoptme.ui.Screens
 import dev.wirespec.adoptme.ui.screens.ScreenGlobals
 import dev.wirespec.adoptme.ui.theme.AppColors
@@ -101,6 +102,19 @@ fun Dummy(
                 }) {
                 Text(
                     text = "Go to home screen",
+                    modifier = modifier.padding(start = 10.dp, top = 7.dp, end = 10.dp, bottom = 7.dp)
+                )
+            }
+
+            Button(
+                modifier = modifier.padding(bottom = 10.dp),
+                colors = AppTheme.getButtonColors(),
+                elevation = ButtonDefaults.elevation(5.dp),
+                onClick = {
+                    App.context.currentActivity?.finish()
+                }) {
+                Text(
+                    text = "Terminate activity",
                     modifier = modifier.padding(start = 10.dp, top = 7.dp, end = 10.dp, bottom = 7.dp)
                 )
             }
