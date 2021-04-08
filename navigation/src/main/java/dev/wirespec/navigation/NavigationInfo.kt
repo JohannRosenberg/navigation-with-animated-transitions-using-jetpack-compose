@@ -9,6 +9,12 @@ import androidx.lifecycle.ViewModel
  * navigation stack is assigned an instance of NavigationInfo.
  */
 data class NavigationInfo(
+
+    /**
+     * A unique id that can be used to identify this item in the navigation stack. This is optional.
+     */
+    var id: Any? = null,
+
     /**
      * The type of screen that is being displayed.
      */

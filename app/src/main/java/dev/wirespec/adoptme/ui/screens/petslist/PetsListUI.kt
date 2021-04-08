@@ -67,7 +67,7 @@ fun PetsListHandler(navInfo: NavigationInfo, modifier: Modifier = Modifier) {
         scrollState = vm.scrollState,
         modifier = modifier,
         onItemClick = { petInfo ->
-            NavigationManager.navigateTo(Screens.PetDetails, petInfo)
+            NavigationManager.navigateTo(screen = Screens.PetDetails, screenData = petInfo)
         },
         onToolbarMenuClick = {
             coroutineScope.launch {

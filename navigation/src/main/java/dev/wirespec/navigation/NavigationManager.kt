@@ -154,13 +154,14 @@ class NavigationManager {
          * hidden placeholder screen is placed after it.
          * @param screen The type of screen that is being navigated to.
          * @param screenData Data that can be passed on to the destination screen.
+         * @param id A unique id to identify this item in the navigation stack.
          */
-        fun navigateTo(screen: Any, screenData: Any? = null) {
-
+        fun navigateTo(screen: Any, screenData: Any? = null, id: Any? = null) {
             val stackScreen = navStack.last()
             val screenInfo = screens.first { it.screen == screen }
 
             stackScreen.apply {
+                this.id = id
                 this.screen = screen
                 this.screenData = screenData
 
@@ -247,6 +248,17 @@ class NavigationManager {
          */
         fun getNavInfo(index: Int): NavigationInfo {
             return navStack[index]
+        }
+
+        /**
+         * Returns the navigation information for the item in the navigation stack that
+         * matches the specified id.
+         */
+        fun getNavInfoById(id: String): NavigationInfo? {
+            if (id == null)
+                return null
+
+            return navStack.find { it.id == id }
         }
     }
 }

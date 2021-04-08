@@ -43,7 +43,7 @@ fun PetDetailsHandler(navInfo: NavigationInfo, modifier: Modifier = Modifier) {
         pet = navInfo.screenData as PetListItemInfo,
         scrollState = vm.scrollState, // Once LazyColumn supports maintaining the scroll state, replace this with vm.listState
         onAdoptClick = {
-            NavigationManager.navigateTo(Screens.Dummy, screenData = "How to adopt")
+            NavigationManager.navigateTo(screen = Screens.Dummy, screenData = "How to adopt")
         },
         onBackButtonClick = {
             NavigationManager.goBack()

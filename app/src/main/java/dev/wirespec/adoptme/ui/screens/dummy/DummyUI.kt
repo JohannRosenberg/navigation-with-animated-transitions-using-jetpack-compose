@@ -85,7 +85,7 @@ fun Dummy(
                 colors = AppTheme.getButtonColors(),
                 elevation = ButtonDefaults.elevation(5.dp),
                 onClick = {
-                    NavigationManager.navigateTo(Screens.Dummy, screenData = "Dummy Screen")
+                    NavigationManager.navigateTo(screen = Screens.Dummy, screenData = "Dummy Screen")
                 }) {
                 Text(
                     text = "Navigate to another dummy screen",

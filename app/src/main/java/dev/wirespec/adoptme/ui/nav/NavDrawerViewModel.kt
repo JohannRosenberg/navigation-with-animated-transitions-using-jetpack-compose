@@ -16,7 +16,7 @@ class NavDrawerViewModel : ViewModel() {
 
     init {
         NavigationManager.observeScreenChange {
-            if  (NavigationManager.totalScreensDisplayed == 1) {
+            if (NavigationManager.totalScreensDisplayed == 1) {
                 _currentMenuId.value = NavMenuConstants.MenuHome
             }
         }
@@ -28,7 +28,7 @@ class NavDrawerViewModel : ViewModel() {
         if (screen == Screens.PetsList) {
             NavigationManager.navigateToHomeScreen()
         } else {
-            NavigationManager.navigateTo(screen = screen,screenData = screenData)
+            NavigationManager.navigateTo(screen = screen, screenData = screenData)
         }
     }
 }

@@ -67,6 +67,7 @@ fun NavDrawer(
             Column(
                 modifier = modifier
                     .background(AppTheme.appColorTheme.materialColors.surface)
+                    .requiredWidth(200.dp)
                     .fillMaxHeight()
                     .padding(20.dp)
                     .verticalScroll(navDrawerScrollState)
@@ -180,7 +181,7 @@ fun NavDrawer(
                 NavMenuItem(
                     menuId = NavMenuConstants.MenuDummyPaymentMethod,
                     icon = Icons.Filled.Payment,
-                    title = "Payment Method",
+                    title = "Payment",
                     screen = Screens.Dummy,
                     dstArgs = "Payment method stuff goes here...",
                     selected = currentMenuId == NavMenuConstants.MenuDummyPaymentMethod,
@@ -189,7 +190,7 @@ fun NavDrawer(
                 NavMenuItem(
                     menuId = NavMenuConstants.MenuDummyAnimalCategories,
                     icon = Icons.Filled.Pets,
-                    title = "Animal Categories",
+                    title = "Categories",
                     screen = Screens.Dummy,
                     dstArgs = "Animal categories go here...",
                     selected = currentMenuId == NavMenuConstants.MenuDummyAnimalCategories,
@@ -225,7 +226,7 @@ fun NavDrawer(
                 NavMenuItem(
                     menuId = NavMenuConstants.MenuDummyVerification,
                     icon = Icons.Filled.VerifiedUser,
-                    title = "Verification Program",
+                    title = "Verification",
                     screen = Screens.Dummy,
                     dstArgs = "Verification stuff goes here...",
                     selected = currentMenuId == NavMenuConstants.MenuDummyVerification,
@@ -261,6 +262,7 @@ fun NavDrawer(
             }
 
             Image(
+                modifier = Modifier.fillMaxHeight(),
                 painter = painterResource(id = R.drawable.nav_drawer_bg),
                 contentDescription = null,
                 contentScale = ContentScale.FillHeight
