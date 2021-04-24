@@ -97,6 +97,8 @@ It should be noted that the cache is not the same thing as the navigation stack.
 
 > IMPORTANT: Use screen caching only when you really need it. If you enable screen caching for a particular screen and the user navigates back to a previous screen and the screen remains cached, there is no guarantee that the user will ever return to that screen, leaving the cached screen in memory. If your viewmodel is running an endless process or taking up a lot of memory, this could be wasteful.
 
+*One important thing to keep in mind when navigating forward to a screen that has been previously cached is that the composable UI for that screen simply attaches to an existing viewmodel. This means that <u>your viewmodel should provide checks to prevent stuff from being restarted</u>. For instance, if your viewmodel started a video meeting, you don't want to run the same code again that starts the meeting. This is in essence what you would do anyways if there was a system change that would cause the activity to be destroyed, such as changing the orientation of the device. This is easy to overlook if you're use to tying your viewmodel's scope to an activity and when the activity gets destroyed, the viewmodel gets destroyed - in which case you have nothing to worry about since everything starts from scratch. But in a Compose app with just a single activity, there is no reason that a viewmodel needs to be scoped to an activity and no need for it to be killed if the activity gets killed. If you let the Navigation Manager handle your viewmodels, by default it will destroy them when they are no longer needed but providing you with the option of keeping them alive when you have reason for doing so.*
+
 <br/><br/>
 
 ## NavigationManager API
