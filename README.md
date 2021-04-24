@@ -72,6 +72,9 @@ NavigationManager.addScreens(
    }
    ```
 
+
+<br/><br/>
+
 ## Screen Caching
 
 When you navigate from one screen back to a previous screen, Navigation Manager removes the current screen from the navigation stack including any viewmodel that you may have optionally included with the screen when you called **addScreens**. The viewmodel will get garbage collected by Android provided some other part of your app is not retaining a reference to it.
