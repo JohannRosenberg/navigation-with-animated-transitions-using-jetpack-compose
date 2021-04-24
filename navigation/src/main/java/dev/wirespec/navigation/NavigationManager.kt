@@ -5,20 +5,19 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
 /**
- * Manages the navigation to and from screens in an Android app. Although developed to work primarily with
- * apps that use Jetpack Compose, it can also be used to provided navigation for the older View based system.
+ * Manages the navigation to and from screens in an Android app. Although developed to work primarily with apps that
+ * use Jetpack Compose, it can also be used to provided navigation for the older View based system.
  *
- * Navigation Manager is intended to replace Android's own Jetpack navigation system. It is light weight, lets
- * you pass any data type from one screen to another (including objects) and allows easy implementation of
- * animated transitions to and from other screens.
+ * Navigation Manager is intended to replace Android's own Jetpack navigation system. It is light weight, lets you
+ * pass any data type from one screen to another (including objects) and allows easy implementation of animated
+ * transitions to and from other screens.
  *
- * Navigation Manager can create and manage the lifecycle of viewmodels for each screen and is the single source
- * of truth for which screen is currently being displayed and tracks the user's navigation path.
+ * Navigation Manager can create and manage the lifecycle of viewmodels for each screen and is the single source of
+ * truth for which screen is currently being displayed and tracks the user's navigation path.
  *
- * As a singleton, Navigation Manager should be initialized in your app in a class that inherits from
- * Application, when the app starts up. It remains resident throughout the lifetime of your app and will
- * retain the state of a screen in the event of screen being recomposed or even if the activity hosting
- * the screen gets killed.
+ * As a singleton, Navigation Manager should be initialized in your app in a class that inherits from Application,
+ * when the app starts up. It remains resident throughout the lifetime of your app and will retain the state of a
+ * screen in the event of screen being recomposed or even if the activity hosting the screen gets killed.
  */
 class NavigationManager {
     companion object {
@@ -26,7 +25,13 @@ class NavigationManager {
         private lateinit var screens: List<ScreenInfo<*>>
         private val screenChangeObservers = mutableListOf<(Any) -> Unit>()
         private var navStack = mutableListOf<NavigationInfo>()
+        private var navCache = mutableListOf<NavigationInfo>()
         private val _onScreenChange = MutableLiveData(0)
+
+        // Exception messages
+        private const val ExceptionMessageNavIdMissing =
+            "The id parameter is missing. Specify the id parameter when calling navigateTo"
+        private const val ExceptionMessageNavIdRequredForCache = "To cache the nav info, you must provide an id."
 
         private fun notifyScreenChange(screen: Any) {
             _onScreenChange.value = (0..MaxRandomNumber).random()
@@ -44,9 +49,9 @@ class NavigationManager {
 
             navStack.add(navInfo)
 
-            // Add a stack item at the end. It acts as a placeholder for the next screen. It needs
-            // to be added in advance and composed when the previously added screen is also composed
-            // in order for the animations to work.
+            // Add a stack item at the end. It acts as a placeholder for the next screen. It needs to be added in
+            // advance and composed when the previously added screen is also composed in order for the animations to
+            // work.
 
             val nextScreen = NavigationInfo()
             addLiveDataToCloseScreen(nextScreen)
@@ -74,9 +79,45 @@ class NavigationManager {
             }
         }
 
+        private fun handleNavigateBackOptions(navigateToHandler: () -> Boolean): Boolean {
+            if ((currentScreenNavInfo.viewmodel != null) && (currentScreenNavInfo.viewmodel is NavigationManagerHelper)) {
+                val navHelper = currentScreenNavInfo.viewmodel as NavigationManagerHelper
+
+                when (navHelper.onNavigateBack()) {
+                    NavigateBackOptions.Cancel -> return true
+                    NavigateBackOptions.GoBackImmediately -> {
+                        return navigateToHandler()
+                    }
+                    NavigateBackOptions.GoBackImmediatelyAndCacheScreen -> {
+                        if (currentScreenNavInfo.id == null) {
+                            throw Exception(ExceptionMessageNavIdMissing)
+                        }
+
+                        if (!navCache.any { it.id == currentScreenNavInfo.id }) {
+                            navCache.add(currentScreenNavInfo)
+                        }
+                    }
+                    NavigateBackOptions.GoBackImmediatelyAndRemoveCachedScreen -> {
+                        if (currentScreenNavInfo.id == null) {
+                            throw Exception(ExceptionMessageNavIdMissing)
+                        }
+
+                        val index = navCache.indexOfFirst { it.id == currentScreenNavInfo.id }
+
+                        if (index >= 0) {
+                            navCache.removeAt(index)
+                        }
+                    }
+                }
+            }
+
+            return navigateToHandler()
+        }
+
+
         /**
-         * Indicates the total number of screens on the stack. This includes the hidden placeholder
-         * screen that always appears last in the stack.
+         * Indicates the total number of screens on the stack. This includes the hidden placeholder screen that always
+         * appears last in the stack.
          */
         val navStackCount: Int
             get() {
@@ -84,8 +125,8 @@ class NavigationManager {
             }
 
         /**
-         * Indicates the total number of screens on the stack excluding the hidden placeholder
-         * screen that always appears last in the stack.
+         * Indicates the total number of screens on the stack excluding the hidden placeholder screen that always
+         * appears last in the stack.
          */
         val totalScreensDisplayed: Int
             get() {
@@ -93,9 +134,9 @@ class NavigationManager {
             }
 
         /**
-         * Used to notify the screen factory that it needs to recompose the screens.
-         * The value returned is a random number between 0 and one million. Using a
-         * randomly generated value forces LiveData to update and notify any observers.
+         * Used to notify the screen factory that it needs to recompose the screens. The value returned is a random
+         * number between 0 and one million. Using a randomly generated value forces LiveData to update and notify any
+         * observers.
          */
         val onScreenChange: LiveData<Int> = _onScreenChange
 
@@ -110,9 +151,8 @@ class NavigationManager {
 
 
         /**
-         * Returns navigation information about the previous screen. Returns null
-         * if there is no previous screen, which would be the case if the current
-         * screen is the home screen.
+         * Returns navigation information about the previous screen. Returns null if there is no previous screen,
+         * which would be the case if the current screen is the home screen.
          */
         val previousScreenNavInfo: NavigationInfo?
             get() {
@@ -124,24 +164,23 @@ class NavigationManager {
             }
 
         /**
-         * An observer that clients can register with to get notified whenever the screen changes.
-         * Note: This is intended to be used by parts of an app that do not generate any UI.
-         * @param callback Upon notification of a screen change, this will indicate the type
-         * of screen that is being displayed. It doesn't indicate which screen but just the type.
-         * It is possible that your app could have multiple Settings screens that are all based on the
-         * same type. Even if the user navigates from the current screen to another one of the same
-         * type, this parameter will only indicate the type.
+         * An observer that clients can register with to get notified whenever the screen changes. Note: This is
+         * intended to be used by parts of an app that do not generate any UI. @param callback Upon notification of a
+         * screen change, this will indicate the type of screen that is being displayed. It doesn't indicate which
+         * screen but just the type. It is possible that your app could have multiple Settings screens that are all
+         * based on the same type. Even if the user navigates from the current screen to another one of the same type,
+         * this parameter will only indicate the type.
          */
         fun observeScreenChange(callback: (screen: Any) -> Unit) {
             screenChangeObservers.add(callback)
         }
 
         /**
-         * Adds all the screens that an app will use. This should only be called once in the app and
-         * should be called when the app is initialized.
+         * Adds all the screens that an app will use. This should only be called once in the app and should be called
+         * when the app is initialized.
          *
-         * @param allScreens A list of one or more screen definitions. One of the screens must have
-         * its isHomeScreen property set to true to indicate that it is the home screen.
+         * @param allScreens A list of one or more screen definitions. One of the screens must have its isHomeScreen
+         * property set to true to indicate that it is the home screen.
          */
         fun addScreens(allScreens: List<ScreenInfo<*>>) {
             screens = allScreens
@@ -149,42 +188,76 @@ class NavigationManager {
         }
 
         /**
-         * Navigates to the specified screen. Calling this function makes the
-         * specified screen the last screen in the navigation stack although a
-         * hidden placeholder screen is placed after it.
+         * Navigates to the specified screen. Calling this function makes the specified screen the last screen in the
+         * navigation stack although a hidden placeholder screen is placed after it.
+         *
          * @param screen The type of screen that is being navigated to.
          * @param screenData Data that can be passed on to the destination screen.
          * @param id A unique id to identify this item in the navigation stack.
+         * @param cacheScreen If set to true, the navigation info for the screen will get cached. The id parameter
+         * must be specified. If an item in the cache already exists with this id, it won't be added to the cache
+         * a second time.
          */
-        fun navigateTo(screen: Any, screenData: Any? = null, id: Any? = null) {
-            val stackScreen = navStack.last()
-            val screenInfo = screens.first { it.screen == screen }
+        fun navigateTo(screen: Any, screenData: Any? = null, id: Any? = null, cacheScreen: Boolean = false) {
 
-            stackScreen.apply {
-                this.id = id
-                this.screen = screen
-                this.screenData = screenData
+            var navInfo: NavigationInfo? = null
+            var addToCache = false
 
-                if (screenInfo.viewmodel != null) {
-                    this.viewmodel = screenInfo.viewmodel.newInstance() as ViewModel
+            if (cacheScreen) {
+                if (id == null) throw Exception(ExceptionMessageNavIdRequredForCache)
+
+                navInfo = navCache.find { it.id == id }
+
+                if (navInfo == null) {
+                    addToCache = true
+                } else {
+                    navInfo._onCloseScreen?.value = false
+                    navStack.add(navStack.lastIndex, navInfo)
                 }
             }
 
-            // Add a hidden placeholder screen.
-            val nextScreen = NavigationInfo()
-            addLiveDataToCloseScreen(nextScreen)
+            if (navInfo == null) {
+                navInfo = navStack.last()
+                val screenInfo = screens.first { it.screen == screen }
 
-            navStack.add(nextScreen)
+                navInfo.apply {
+                    this.id = id
+                    this.screen = screen
+                    this.screenData = screenData
+
+                    if (screenInfo.viewmodel != null) {
+                        this.viewmodel = screenInfo.viewmodel.newInstance() as ViewModel
+                    }
+                }
+
+                // Add a hidden placeholder screen.
+                val nextScreen = NavigationInfo()
+                addLiveDataToCloseScreen(nextScreen)
+
+                navStack.add(nextScreen)
+            }
+
+            if (addToCache) {
+                navCache.add(navInfo)
+            }
+
             notifyScreenChange(screen)
         }
 
         /**
-         * Navigates to the home screen. All previously screens are removed from
-         * the navigation stack making the home screen the only screen on the stack
-         * with the hidden placeholder screen added after it. Using the Back button
-         * at this point normally should cause the app to exit.
+         * Navigates to the home screen. All previously screens are removed from the navigation stack making the home
+         * screen the only screen on the stack with the hidden placeholder screen added after it. Using the Back
+         * button at this point normally should cause the app to exit.
          */
         fun navigateToHomeScreen() {
+            handleNavigateBackOptions(::navigateToHomeScreenImmediately)
+        }
+
+        /**
+         * Navigates to the home screen immediately. No check is made to see if the current screen requires a
+         * confirmation to go to the home screen.
+         */
+        fun navigateToHomeScreenImmediately(): Boolean {
             if (navStack.size > 2) {
                 navStack = navStack.filterIndexed { index, _ ->
                     (index == 0) || (index == navStack.lastIndex)
@@ -192,38 +265,36 @@ class NavigationManager {
             }
 
             notifyScreenChange(navStack.first().screen!!)
+            return true
         }
 
         /**
-         * Navigates back to the previous screen. If the current screen's view model is controlled by
-         * the navigation manager, a check will first be made to see if the view model implements the
-         * navigateBackImmediately function. If it does, a call is first made to navigateBackImmediately. If
-         * navigateBackImmediately returns true, the navigation manager will navigate to the previous screen (if one exists)
-         * If navigateBackImmediately returns false, no navigation is made to the previous screen. If the current
-         * screen needs to perform clean up work or prompt the user about something prior to navigating to the previous screen, the
-         * current screen can then call the goBackImmediately function when it is ready to return to the previous screen.
+         * Navigates back to the previous screen. If the current screen's viewmodel is controlled by the navigation
+         * manager, a check will first be made to see if the viewmodel implements the onNavigateBack function (from
+         * the NavigationManagerHelper interface). If it does, a call is first made to onNavigateBack. If
+         * onNavigateBack returns NavigateBackOptions.GoBackImmediately,
+         * NavigateBackOptions.GoBackImmediatelyAndCacheNavInfo or
+         * NavigateBackOptions.GoBackImmediatelyAndRemoveCachedNavInfo, the navigation manager will navigate to the
+         * previous screen (if one exists) If navigateBackImmediately returns NavigateBackOptions.Cancel, no
+         * navigation is made to the previous screen. If the current screen needs to perform clean up work or prompt
+         * the user about something prior to navigating to the previous screen, the current screen can then call the
+         * goBackImmediately function when it is ready to return to the previous screen.
          *
          * Once navigation to the previous screen is allowed, the current screen is removed from the navigation stack.
          * If the current screen is the home screen, then hitting the Back button should cause the app to exit.
+         *
+         * @return Returns true if the Navigation Manager could navigate to a previous screen. It will return false if
+         * the current screen is the Home screen, meaning that there are no more screens that it could go back to.
          */
         fun goBack(): Boolean {
-
-            if ((currentScreenNavInfo.viewmodel != null) && (currentScreenNavInfo.viewmodel is NavigationManagerHelper)) {
-                val navHelper = currentScreenNavInfo.viewmodel as NavigationManagerHelper
-
-                if (!navHelper.navigateBackImmediately()) {
-                    return true
-                }
-            }
-
-            return goBackImmediately()
+            return handleNavigateBackOptions(::goBackImmediately)
         }
 
 
         /**
-         * Navigates back to the previous screen immediately. No check is made to see if the current screen
-         * requires a confirmation to go back. The current screen is removed from the navigation stack. If the current screen
-         * is the home screen, then hitting the Back button should cause the app to exit.
+         * Navigates back to the previous screen immediately. No check is made to see if the current screen requires a
+         * confirmation to go back. The current screen is removed from the navigation stack. If the current screen is
+         * the home screen, then hitting the Back button should cause the app to exit.
          */
         fun goBackImmediately(): Boolean {
             if (navStack.size == 2) {
@@ -242,23 +313,38 @@ class NavigationManager {
         }
 
         /**
-         * Returns navigation information about any item in the navigation stack.
-         * @param index The first item in the stack starts with zero. Use the
-         * totalScreensDisplayed property to get the last index.
+         * Returns navigation information about any item in the navigation stack. @param index The first item in the
+         * stack starts with zero. Use the totalScreensDisplayed property to get the last index.
          */
         fun getNavInfo(index: Int): NavigationInfo {
             return navStack[index]
         }
 
         /**
-         * Returns the navigation information for the item in the navigation stack that
-         * matches the specified id.
+         * Returns the navigation information for the item in the navigation stack that matches the specified id.
          */
         fun getNavInfoById(id: String): NavigationInfo? {
-            if (id == null)
-                return null
-
             return navStack.find { it.id == id }
+        }
+
+        /**
+         * Removes all items from the screen cache.
+         */
+        fun clearScreenCache() {
+            navCache.clear()
+        }
+
+        /**
+         * Removes a screen from the cache.
+         *
+         * @param The id of the screen to remove.
+         */
+        fun removeScreenFromCache(screenId: String) {
+            val index = navCache.indexOfFirst { it.id == screenId }
+
+            if (index >= 0) {
+                navCache.removeAt(index)
+            }
         }
     }
 }
