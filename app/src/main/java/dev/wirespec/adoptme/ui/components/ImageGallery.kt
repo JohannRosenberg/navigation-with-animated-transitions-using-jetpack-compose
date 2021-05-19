@@ -1,5 +1,6 @@
 package dev.wirespec.adoptme.ui.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
@@ -8,7 +9,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import dev.chrisbanes.accompanist.coil.CoilImage
+import com.google.accompanist.coil.rememberCoilPainter
 import dev.wirespec.adoptme.da.web.PetsLargeImagesPath
 import dev.wirespec.adoptme.da.web.PetsThumbnailImagesPath
 import dev.wirespec.adoptme.models.PetListItemInfo
@@ -21,13 +22,15 @@ fun ImageGallery(pet: PetListItemInfo, modifier: Modifier = Modifier) {
         modifier = modifier
             .fillMaxWidth()
     ) {
-        CoilImage(
-            data = PetsLargeImagesPath + pet.id + "-" + selectedThumbnailNumber + ".jpg",
-            contentDescription = "",
+        Image(
+            painter = rememberCoilPainter(
+                PetsLargeImagesPath + pet.id + "-" + selectedThumbnailNumber + ".jpg",
+                fadeIn = true
+            ),
+            contentDescription = null,
             modifier = modifier
                 .fillMaxWidth()
                 .requiredHeight(400.dp),
-            fadeIn = true,
             contentScale = ContentScale.Crop
         )
 
@@ -47,16 +50,18 @@ fun ImageGallery(pet: PetListItemInfo, modifier: Modifier = Modifier) {
                             .requiredHeight(100.dp)
                     ) {
 
-                        CoilImage(
-                            data = PetsThumbnailImagesPath + pet.id + "-" + i + ".jpg",
-                            contentDescription = "",
+                        Image(
+                            painter = rememberCoilPainter(
+                                PetsThumbnailImagesPath + pet.id + "-" + i + ".jpg",
+                                fadeIn = true
+                            ),
+                            contentDescription = null,
                             modifier = modifier
                                 .width(90.dp)
                                 .height(90.dp)
                                 .clickable {
                                     selectedThumbnailNumber = i
                                 },
-                            fadeIn = true,
                             contentScale = ContentScale.Fit
                         )
                     }

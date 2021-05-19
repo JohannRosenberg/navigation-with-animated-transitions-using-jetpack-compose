@@ -1,5 +1,6 @@
 package dev.wirespec.adoptme.ui.screens.petslist
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
@@ -8,7 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import dev.chrisbanes.accompanist.coil.CoilImage
+import com.google.accompanist.coil.rememberCoilPainter
 import dev.wirespec.adoptme.da.web.PetsThumbnailImagesPath
 import dev.wirespec.adoptme.models.PetListItemInfo
 
@@ -48,18 +49,19 @@ fun PetGridRow(
                     .requiredWidth((colWidth - 1).dp)
                     .requiredHeight((colWidth - 1).dp)
             ) {
-                CoilImage(
-                    data = "$PetsThumbnailImagesPath${pet.id}-1.jpg",
-                    contentDescription = "",
+                Image(
+                    painter = rememberCoilPainter(
+                        "$PetsThumbnailImagesPath${pet.id}-1.jpg",
+                        fadeIn = false
+                    ),
+                    contentDescription = null,
                     modifier = modifier
                         .fillMaxSize()
                         .clickable {
                             onItemClick(pet)
                         },
-                    fadeIn = false,
-                    contentScale = ContentScale.Fit,
-
-                    )
+                    contentScale = ContentScale.Fit
+                )
 
                 Row(modifier = modifier.padding(top = 110.dp)) {
                     Text(
