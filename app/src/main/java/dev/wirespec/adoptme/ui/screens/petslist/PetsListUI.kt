@@ -57,7 +57,7 @@ import kotlin.math.roundToInt
 
 @ExperimentalMaterialApi
 @Composable
-fun PetsListHandler(navInfo: NavigationInfo, modifier: Modifier = Modifier) {
+fun PetsListHandler(navInfo: NavigationInfo, modifier: Modifier = Modifier, screenIsClosing: Boolean = false) {
     val vm = navInfo.viewmodel as PetsListViewModel
     val vmMain: MainViewModel = viewModel()
     val coroutineScope = rememberCoroutineScope()

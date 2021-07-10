@@ -20,7 +20,7 @@ import dev.wirespec.navigation.NavigationManager
 
 @ExperimentalMaterialApi
 @Composable
-fun SettingsHandler(navInfo: NavigationInfo, modifier: Modifier = Modifier) {
+fun SettingsHandler(navInfo: NavigationInfo, modifier: Modifier = Modifier, screenIsClosing: Boolean = false) {
 
     val vm = navInfo.viewmodel as SettingsViewModel
     Settings(

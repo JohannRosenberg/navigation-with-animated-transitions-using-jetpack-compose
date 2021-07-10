@@ -44,9 +44,19 @@ fun ScreenFactory(isVisible: Boolean, navInfo: NavigationInfo?, modifier: Modifi
         closeScreen = false
 
     if (navInfo?.screen == Screens.PetsList) {
-        PetsListHandler(navInfo = navInfo)
+        PetsListHandler(navInfo = navInfo, screenIsClosing = closeScreen)
         return
     }
+
+    /**
+     * IMPORTANT: It is strongly recommended that your screen's handler (PetDetailsHandler, DummyHandler,
+     * SettingsHandler as used below) contain a parameter that is used to indicate when the screen is closing.
+     * When animation in Compose is executed, the screen gets recomposed even when the screen is being
+     * animated to exit. This means that any code in your screen handler will get executed when it closes.
+     * If there is any code in your handler that should only be executed when the screen is being shown
+     * (and not when it's removed), you should test to see if the screenIsClosing is set to true and not execute
+     * the code in your handler.
+     */
 
     AnimatedVisibility(
         visible = isVisible && !closeScreen,
@@ -55,9 +65,9 @@ fun ScreenFactory(isVisible: Boolean, navInfo: NavigationInfo?, modifier: Modifi
     ) {
         if (navInfo?.screen != null) {
             when (navInfo.screen) {
-                Screens.PetDetails -> PetDetailsHandler(navInfo)
-                Screens.Dummy -> DummyHandler(navInfo)
-                Screens.Settings -> SettingsHandler(navInfo)
+                Screens.PetDetails -> PetDetailsHandler(navInfo, screenIsClosing = closeScreen)
+                Screens.Dummy -> DummyHandler(navInfo, screenIsClosing = closeScreen)
+                Screens.Settings -> SettingsHandler(navInfo, screenIsClosing = closeScreen)
             }
         } else {
             Surface(modifier = modifier.fillMaxSize()) {}
