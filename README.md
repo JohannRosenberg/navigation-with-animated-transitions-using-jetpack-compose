@@ -2,6 +2,9 @@
 
 <img src="https://github.com/JohannBlake/adoptme/blob/main/images/navigation.gif" width="300" height="600">
 
+**This project has been deprecated and replaced with Jetmagic, available at:**
+[https://github.com/JohannBlake/Jetmagic](https://github.com/JohannBlake/Jetmagic)
+
 This app demonstrates how to use animated transitions when navigating between screens when using Jetpack Compose. It also shows how to pass any type of data to another screen.
 
 I have also written an article on Medium that covers the code in this app in much more detail. It touches on developing with Compose beyond what you read in the official Android docs. You can find the article at:<br>
